@@ -8,7 +8,7 @@ import {
   Trash2,
   BookOpen,
   School,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import {
@@ -18,34 +18,34 @@ import {
   deleteTask,
   type Task,
 } from "../../lib/tasks";
-import { 
-  subscribeToUserGroups, 
-  subscribeToAssessments, 
-  type GroupPost, 
-  type AcademicGroup 
+import {
+  subscribeToUserGroups,
+  subscribeToAssessments,
+  type GroupPost,
+  type AcademicGroup,
 } from "../../lib/groups";
 import AddTaskDialog from "../../components/tasks/AddTaskDialog";
 
 type DisplayItem = {
   id: string;
-  source: 'personal' | 'assessment';
+  source: "personal" | "assessment";
   title: string;
   description: string;
   dueDate: Date | null;
-  status: 'todo' | 'done';
-  priority: 'low' | 'medium' | 'high';
+  status: "todo" | "done";
+  priority: "low" | "medium" | "high";
   tag?: string; // Course Name or Code
   originalObject: Task | GroupPost;
 };
 
 export default function TasksPage() {
   const { user } = useAuthStore();
-  
+
   // Data State
   const [personalTasks, setPersonalTasks] = useState<Task[]>([]);
   const [userGroups, setUserGroups] = useState<AcademicGroup[]>([]);
   const [assessments, setAssessments] = useState<GroupPost[]>([]);
-  
+
   // UI State
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -80,18 +80,18 @@ export default function TasksPage() {
     const unsubscribers: (() => void)[] = [];
     const assessmentsMap = new Map<string, GroupPost[]>();
 
-    userGroups.forEach(group => {
-       const unsub = subscribeToAssessments(group.id, (posts) => {
-           assessmentsMap.set(group.id, posts);
-           const allAssessments = Array.from(assessmentsMap.values()).flat();
-           setAssessments(allAssessments);
-       });
-       unsubscribers.push(unsub);
+    userGroups.forEach((group) => {
+      const unsub = subscribeToAssessments(group.id, (posts) => {
+        assessmentsMap.set(group.id, posts);
+        const allAssessments = Array.from(assessmentsMap.values()).flat();
+        setAssessments(allAssessments);
+      });
+      unsubscribers.push(unsub);
     });
 
     return () => {
-      unsubscribers.forEach(u => u());
-    }
+      unsubscribers.forEach((u) => u());
+    };
   }, [userGroups]);
 
   const handleAddTask = async (taskData: any) => {
@@ -100,8 +100,8 @@ export default function TasksPage() {
   };
 
   const handleToggleStatus = async (item: DisplayItem) => {
-    if (item.source === 'assessment') return; // Cannot toggle assessment status yet (read only)
-    
+    if (item.source === "assessment") return; // Cannot toggle assessment status yet (read only)
+
     // Type guard for personal task
     const task = item.originalObject as Task;
     const newStatus = task.status === "done" ? "todo" : "done";
@@ -109,8 +109,8 @@ export default function TasksPage() {
   };
 
   const handleDeleteTask = async (item: DisplayItem) => {
-    if (item.source === 'assessment') return;
-    
+    if (item.source === "assessment") return;
+
     if (confirm("Are you sure you want to delete this task?")) {
       await deleteTask(item.id);
     }
@@ -131,33 +131,35 @@ export default function TasksPage() {
 
   // Merge and Transform Data
   const allItems: DisplayItem[] = [
-    ...personalTasks.map(t => ({
+    ...personalTasks.map((t) => ({
       id: t.id,
-      source: 'personal' as const,
+      source: "personal" as const,
       title: t.title,
-      description: t.description || '',
+      description: t.description || "",
       dueDate: t.dueDate,
-      status: t.status === 'done' ? 'done' as const : 'todo' as const,
+      status: t.status === "done" ? ("done" as const) : ("todo" as const),
       priority: t.priority,
       tag: t.courseCode,
-      originalObject: t
+      originalObject: t,
     })),
-    ...assessments.map(a => {
+    ...assessments.map((a) => {
       // Helper to convert Firestore timestamp
-      const date = a.eventDate?.seconds ? new Date(a.eventDate.seconds * 1000) : null;
+      const date = a.eventDate?.seconds
+        ? new Date(a.eventDate.seconds * 1000)
+        : null;
       return {
         id: a.id,
-        source: 'assessment' as const,
-        title: `Exam/CAT: ${a.unitName || 'Unknown Unit'}`,
+        source: "assessment" as const,
+        title: `Exam/CAT: ${a.unitName || "Unknown Unit"}`,
         description: a.content,
         dueDat: date,
         dueDate: date,
-        status: 'todo' as const, // Assessments default to todo for now
-        priority: 'high' as const, // Assessments are always high priority
-        tag: 'Academic',
-        originalObject: a
+        status: "todo" as const, // Assessments default to todo for now
+        priority: "high" as const, // Assessments are always high priority
+        tag: "Academic",
+        originalObject: a,
       };
-    })
+    }),
   ].sort((a, b) => {
     // Sort by due date (soonest first)
     if (!a.dueDate) return 1;
@@ -215,7 +217,9 @@ export default function TasksPage() {
       {/* Tasks List */}
       <div className="space-y-4">
         {loading ? (
-          <div className="text-center py-12 text-gray-500">Loading tasks...</div>
+          <div className="text-center py-12 text-gray-500">
+            Loading tasks...
+          </div>
         ) : filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed rounded-lg border-gray-200">
             <CheckCircle2 className="h-12 w-12 text-gray-300 mb-4" />
@@ -235,14 +239,22 @@ export default function TasksPage() {
               className={`
                 group flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border p-4 transition-all hover:shadow-md
                 ${item.status === "done" ? "bg-gray-50/50" : "bg-white"}
-                ${item.source === 'assessment' ? "border-l-4 border-l-red-500" : ""}
+                ${
+                  item.source === "assessment"
+                    ? "border-l-4 border-l-red-500"
+                    : ""
+                }
               `}
             >
               <div className="flex items-start gap-4 flex-1">
                 <button
                   onClick={() => handleToggleStatus(item)}
-                  disabled={item.source === 'assessment'}
-                  className={`mt-1 flex-shrink-0 rounded-full transition-colors ${item.source === 'assessment' ? 'cursor-default opacity-50' : 'cursor-pointer'} ${
+                  disabled={item.source === "assessment"}
+                  className={`mt-1 flex-shrink-0 rounded-full transition-colors ${
+                    item.source === "assessment"
+                      ? "cursor-default opacity-50"
+                      : "cursor-pointer"
+                  } ${
                     item.status === "done"
                       ? "text-green-500"
                       : "text-gray-300 hover:text-gray-500"
@@ -278,7 +290,9 @@ export default function TasksPage() {
                         item.priority
                       )}`}
                     >
-                      {item.source === 'assessment' && <AlertCircle className="w-3 h-3 mr-1" />}
+                      {item.source === "assessment" && (
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                      )}
                       <Flag className="mr-1 h-3 w-3" />
                       {item.priority}
                     </span>
@@ -301,17 +315,17 @@ export default function TasksPage() {
                       </span>
                     )}
 
-                    {item.source === 'assessment' && (
-                       <span className="flex items-center text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-md">
-                          <School className="mr-1 h-3 w-3" />
-                          Class Assessment
-                       </span>
+                    {item.source === "assessment" && (
+                      <span className="flex items-center text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-md">
+                        <School className="mr-1 h-3 w-3" />
+                        Class Assessment
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
 
-              {item.source === 'personal' && (
+              {item.source === "personal" && (
                 <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleDeleteTask(item)}

@@ -7,11 +7,22 @@ import { Plus } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import AddCourseDialog from "../../components/timetable/AddCourseDialog";
 import { addCourse, subscribeToCourses } from "../../lib/courses";
-import { subscribeToUserGroups, subscribeToUnits, type AcademicUnit, type AcademicGroup } from "../../lib/groups";
+import {
+  subscribeToUserGroups,
+  subscribeToUnits,
+  type AcademicUnit,
+  type AcademicGroup,
+} from "../../lib/groups";
 import type { Course } from "../../types";
 
 const DAY_MAP: Record<string, number> = {
-  "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
 };
 
 export default function TimetablePage() {
@@ -46,25 +57,24 @@ export default function TimetablePage() {
       setGroupUnits([]);
       return;
     }
-    
+
     const unsubscribers: (() => void)[] = [];
     const unitsMap = new Map<string, AcademicUnit[]>();
 
-    userGroups.forEach(group => {
-       const unsub = subscribeToUnits(group.id, (units) => {
-           unitsMap.set(group.id, units);
-           // Flatten map to array and update state
-           const allUnits = Array.from(unitsMap.values()).flat();
-           setGroupUnits(allUnits);
-       });
-       unsubscribers.push(unsub);
+    userGroups.forEach((group) => {
+      const unsub = subscribeToUnits(group.id, (units) => {
+        unitsMap.set(group.id, units);
+        // Flatten map to array and update state
+        const allUnits = Array.from(unitsMap.values()).flat();
+        setGroupUnits(allUnits);
+      });
+      unsubscribers.push(unsub);
     });
 
     return () => {
-      unsubscribers.forEach(u => u());
-    }
+      unsubscribers.forEach((u) => u());
+    };
   }, [userGroups]);
-
 
   // Transform Firestore courses into FullCalendar recurring events
   const personalEvents = courses.map((course) => ({
@@ -78,27 +88,27 @@ export default function TimetablePage() {
     extendedProps: {
       location: course.location,
       code: course.code,
-      type: 'personal'
+      type: "personal",
     },
   }));
 
   // Transform Group Units into FullCalendar recurring events
-  const groupEvents = groupUnits.flatMap((unit) => 
-     unit.schedule.map((slot, idx) => ({
-        id: `${unit.id}-${idx}`,
-        title: unit.name,
-        daysOfWeek: [DAY_MAP[slot.day] ?? 1], 
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        backgroundColor: '#4f46e5', // Indigo-600 for group units
-        borderColor: '#4338ca',
-        extendedProps: {
-           location: slot.location,
-           code: unit.code,
-           type: 'group',
-           lecturer: unit.lecturerName
-        }
-     }))
+  const groupEvents = groupUnits.flatMap((unit) =>
+    unit.schedule.map((slot, idx) => ({
+      id: `${unit.id}-${idx}`,
+      title: unit.name,
+      daysOfWeek: [DAY_MAP[slot.day] ?? 1],
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      backgroundColor: "#4f46e5", // Indigo-600 for group units
+      borderColor: "#4338ca",
+      extendedProps: {
+        location: slot.location,
+        code: unit.code,
+        type: "group",
+        lecturer: unit.lecturerName,
+      },
+    }))
   );
 
   const events = [...personalEvents, ...groupEvents];
