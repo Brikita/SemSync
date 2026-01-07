@@ -187,17 +187,23 @@ export const subscribeToUnits = (
   callback: (units: AcademicUnit[]) => void
 ) => {
   const unitsRef = collection(db, "groups", groupId, "units");
-  return onSnapshot(unitsRef, (snapshot) => {
-    const units = snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          groupId,
-          ...doc.data(),
-        } as AcademicUnit)
-    );
-    callback(units);
-  });
+  return onSnapshot(
+    unitsRef,
+    (snapshot) => {
+      const units = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            groupId,
+            ...doc.data(),
+          } as AcademicUnit)
+      );
+      callback(units);
+    },
+    (error) => {
+      console.error("Error subscribing to units:", error);
+    }
+  );
 };
 
 export const subscribeToPosts = (
