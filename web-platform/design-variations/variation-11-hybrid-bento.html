@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SemSync - Variation 11: Hybrid Bento (Light Mode)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ========== THEME VARIABLES ========== */
+      :root,
+      [data-theme="light"] {
+        --bg: #f8f9fc;
+        --surface: #ffffff;
+        --surface-raised: #ffffff;
+        --border: #e5e7eb;
+        --border-focus: #d1d5db;
+
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-muted: #9ca3af;
+
+        --primary: #6366f1;
+        --primary-light: #818cf8;
+        --primary-dark: #4f46e5;
+        --primary-bg: rgba(99, 102, 241, 0.1);
+
+        --secondary: #ec4899;
+        --tertiary: #14b8a6;
+        --amber: #f59e0b;
+
+        --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        --gradient-2: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+        --gradient-3: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);
+        --gradient-4: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 12px 40px rgba(99, 102, 241, 0.15);
+
+        --nav-bg: #ffffff;
+        --nav-hover: #f3f4f6;
+        --nav-active-bg: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        --nav-active-text: white;
+        --nav-icon-bg: rgba(99, 102, 241, 0.1);
+      }
+
+      [data-theme="dark"] {
+        --bg: #0a0a0b;
+        --surface: #111113;
+        --surface-raised: #18181b;
+        --border: #27272a;
+        --border-focus: #3f3f46;
+
+        --text: #fafafa;
+        --text-secondary: #a1a1aa;
+        --text-muted: #71717a;
+
+        --primary: #818cf8;
+        --primary-light: #a5b4fc;
+        --primary-dark: #6366f1;
+        --primary-bg: rgba(129, 140, 248, 0.15);
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 12px 40px rgba(99, 102, 241, 0.25);
+
+        --nav-bg: #111113;
+        --nav-hover: #18181b;
+        --nav-active-bg: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        --nav-active-text: white;
+        --nav-icon-bg: rgba(129, 140, 248, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit", "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      /* ========== APP LAYOUT ========== */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ========== SIDEBAR (From Variation 7 - Warm Community style) ========== */
+      .sidebar {
+        width: 280px;
+        background: var(--nav-bg);
+        border-right: 1px solid var(--border);
+        padding: 24px 16px;
+        display: flex;
+        flex-direction: column;
+        transition: background 0.3s ease;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 8px 12px;
+        margin-bottom: 28px;
+      }
+
+      .logo-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--gradient-1);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: white;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .logo-text span {
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Search Box */
+      .search-box {
+        position: relative;
+        margin-bottom: 24px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 14px 18px 14px 48px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--surface-raised);
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: var(--text);
+        transition: all 0.2s ease;
+      }
+
+      .search-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-bg);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        color: var(--text-muted);
+      }
+
+      .search-kbd {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-muted);
+        font-family: "Inter", monospace;
+      }
+
+      /* Nav Groups */
+      .nav-group {
+        margin-bottom: 24px;
+      }
+
+      .nav-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        padding: 0 14px;
+        margin-bottom: 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-bottom: 4px;
+      }
+
+      .nav-item:hover {
+        background: var(--nav-hover);
+        color: var(--text);
+        transform: translateX(4px);
+      }
+
+      .nav-item.active {
+        background: var(--nav-active-bg);
+        color: var(--nav-active-text);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .nav-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--nav-icon-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+
+      .nav-item.active .nav-icon {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-badge {
+        margin-left: auto;
+        background: var(--secondary);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+
+      /* User Card */
+      .user-card {
+        margin-top: auto;
+        background: var(--gradient-1);
+        border-radius: 16px;
+        padding: 18px;
+        color: white;
+      }
+
+      .user-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+      }
+
+      .user-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .user-role {
+        font-size: 0.8rem;
+        opacity: 0.85;
+      }
+
+      /* ========== MAIN CONTENT ========== */
+      .main {
+        flex: 1;
+        padding: 28px 36px;
+        overflow-y: auto;
+      }
+
+      /* ========== HEADER (From Variation 2 - Modern Minimal style) ========== */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .page-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .header-tabs {
+        display: flex;
+        gap: 4px;
+        background: var(--surface-raised);
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
+
+      .header-tab {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .header-tab:hover {
+        color: var(--text-secondary);
+      }
+
+      .header-tab.active {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.15s ease;
+      }
+
+      .icon-btn:hover {
+        background: var(--nav-hover);
+        border-color: var(--border-focus);
+        color: var(--text);
+      }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        background: var(--nav-hover);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+      }
+
+      .btn-primary {
+        background: var(--gradient-1);
+        color: white;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 50px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-ghost {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn-ghost:hover {
+        background: var(--nav-hover);
+      }
+
+      /* ========== BENTO GRID (From Variation 9) ========== */
+      .bento {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-auto-rows: minmax(120px, auto);
+        gap: 20px;
+      }
+
+      .cell {
+        background: var(--surface);
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .cell:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Grid Spans */
+      .col-3 {
+        grid-column: span 3;
+      }
+      .col-4 {
+        grid-column: span 4;
+      }
+      .col-5 {
+        grid-column: span 5;
+      }
+      .col-6 {
+        grid-column: span 6;
+      }
+      .col-7 {
+        grid-column: span 7;
+      }
+      .col-8 {
+        grid-column: span 8;
+      }
+      .row-1 {
+        grid-row: span 1;
+      }
+      .row-2 {
+        grid-row: span 2;
+      }
+      .row-3 {
+        grid-row: span 3;
+      }
+
+      /* Feature Cell */
+      .feature-cell {
+        background: var(--gradient-1);
+        color: white;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+      }
+
+      .feature-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .feature-desc {
+        opacity: 0.9;
+        font-size: 0.95rem;
+        margin-bottom: auto;
+      }
+
+      .feature-stat {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-top: 16px;
+      }
+
+      .feature-stat-label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      /* Stat Cell */
+      .stat-cell {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-cell .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+      }
+
+      .stat-cell.purple .stat-icon {
+        background: rgba(99, 102, 241, 0.1);
+      }
+      .stat-cell.pink .stat-icon {
+        background: rgba(236, 72, 153, 0.1);
+      }
+      .stat-cell.teal .stat-icon {
+        background: rgba(20, 184, 166, 0.1);
+      }
+      .stat-cell.amber .stat-icon {
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      [data-theme="dark"] .stat-cell.purple .stat-icon {
+        background: rgba(129, 140, 248, 0.15);
+      }
+      [data-theme="dark"] .stat-cell.pink .stat-icon {
+        background: rgba(244, 114, 182, 0.15);
+      }
+      [data-theme="dark"] .stat-cell.teal .stat-icon {
+        background: rgba(45, 212, 191, 0.15);
+      }
+      [data-theme="dark"] .stat-cell.amber .stat-icon {
+        background: rgba(251, 191, 36, 0.15);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .stat-cell.purple .stat-value {
+        color: var(--primary);
+      }
+      .stat-cell.pink .stat-value {
+        color: var(--secondary);
+      }
+      .stat-cell.teal .stat-value {
+        color: var(--tertiary);
+      }
+      .stat-cell.amber .stat-value {
+        color: var(--amber);
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      /* Schedule Cell */
+      .schedule-cell {
+        padding: 20px;
+      }
+
+      .cell-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .cell-title {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .cell-action {
+        font-size: 0.8rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .cell-action:hover {
+        text-decoration: underline;
+      }
+
+      .schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .schedule-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px;
+        background: var(--bg);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .schedule-item:hover {
+        transform: translateX(4px);
+      }
+
+      .schedule-time {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--primary);
+        min-width: 50px;
+      }
+
+      .schedule-bar {
+        width: 4px;
+        height: 40px;
+        border-radius: 2px;
+      }
+
+      .schedule-bar.purple {
+        background: var(--gradient-1);
+      }
+      .schedule-bar.pink {
+        background: var(--gradient-2);
+      }
+      .schedule-bar.teal {
+        background: var(--gradient-3);
+      }
+
+      .schedule-info {
+        flex: 1;
+      }
+
+      .schedule-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .schedule-meta {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .schedule-badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        background: var(--gradient-1);
+        color: white;
+      }
+
+      /* Task Cell */
+      .task-cell {
+        padding: 20px;
+      }
+
+      .task-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: var(--bg);
+        border-radius: 10px;
+        transition: all 0.2s ease;
+      }
+
+      .task-item:hover {
+        background: var(--nav-hover);
+      }
+
+      .task-check {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 2px solid var(--border);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: white;
+        transition: all 0.2s ease;
+      }
+
+      .task-check:hover {
+        border-color: var(--primary);
+      }
+
+      .task-check.done {
+        background: var(--gradient-1);
+        border-color: var(--primary);
+      }
+
+      .task-content {
+        flex: 1;
+      }
+
+      .task-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .task-title.completed {
+        text-decoration: line-through;
+        color: var(--text-muted);
+      }
+
+      .task-due {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .task-priority {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .priority-high {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+      .priority-medium {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      /* Quick Actions Cell */
+      .actions-cell {
+        background: var(--gradient-2);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .actions-title {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        flex: 1;
+      }
+
+      .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+      }
+
+      .action-btn span {
+        font-size: 1.3rem;
+      }
+
+      /* Progress Cell */
+      .progress-cell {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .progress-ring {
+        width: 100px;
+        height: 100px;
+        margin: 16px auto;
+        position: relative;
+      }
+
+      .progress-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .progress-ring circle {
+        fill: none;
+        stroke-width: 8;
+      }
+
+      .progress-bg {
+        stroke: var(--bg);
+      }
+
+      .progress-fill {
+        stroke: url(#progressGradient);
+        stroke-linecap: round;
+        stroke-dasharray: 251;
+        stroke-dashoffset: 45;
+      }
+
+      .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      .progress-label {
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* ========== DESIGN INFO ========== */
+      .design-info {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 20px 24px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        max-width: 340px;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+      }
+
+      .design-info h4 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .design-info ul {
+        list-style: none;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+
+      .design-info li {
+        padding: 3px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SVG Gradient Definition -->
+    <svg style="width: 0; height: 0; position: absolute">
+      <defs>
+        <linearGradient
+          id="progressGradient"
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
+          <stop offset="0%" style="stop-color: #6366f1" />
+          <stop offset="100%" style="stop-color: #8b5cf6" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="app">
+      <!-- SIDEBAR (Variation 7 style - Warm Community nav) -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-icon">S</div>
+          <span class="logo-text">Sem<span>Sync</span></span>
+        </div>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Search..." />
+          <span class="search-kbd">⌘K</span>
+        </div>
+
+        <nav class="nav-group">
+          <div class="nav-label">Menu</div>
+          <a href="#" class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            Dashboard
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Timetable
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">✅</span>
+            Tasks
+            <span class="nav-badge">5</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📝</span>
+            Notes
+          </a>
+        </nav>
+
+        <nav class="nav-group">
+          <div class="nav-label">Your Classes</div>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">👥</span>
+            CS Year 2
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📁</span>
+            Resources
+          </a>
+        </nav>
+
+        <div class="user-card">
+          <div class="user-row">
+            <div class="user-avatar">JD</div>
+            <div>
+              <div class="user-name">Jane Doe</div>
+              <div class="user-role">Computer Science</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main">
+        <!-- HEADER (Variation 2 style - Modern Minimal) -->
+        <header class="header">
+          <div class="header-left">
+            <h1 class="page-title">Dashboard</h1>
+            <div class="header-tabs">
+              <button class="header-tab active">Overview</button>
+              <button class="header-tab">Analytics</button>
+              <button class="header-tab">Activity</button>
+            </div>
+          </div>
+          <div class="header-right">
+            <button
+              class="theme-toggle"
+              onclick="toggleTheme()"
+              title="Toggle theme"
+            >
+              <span id="theme-icon">🌙</span>
+            </button>
+            <button class="icon-btn">🔔</button>
+            <button class="btn btn-primary">+ New Task</button>
+          </div>
+        </header>
+
+        <!-- BENTO GRID (Variation 9 style) -->
+        <div class="bento">
+          <!-- Feature Cell -->
+          <div class="cell feature-cell col-5 row-2">
+            <div class="feature-icon">📚</div>
+            <div class="feature-title">Focus Mode Active</div>
+            <div class="feature-desc">
+              You have 3 classes today. Stay focused and organized!
+            </div>
+            <div class="feature-stat">4h 30m</div>
+            <div class="feature-stat-label">Study time this week</div>
+          </div>
+
+          <!-- Stats -->
+          <div class="cell stat-cell purple col-3">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Classes this week</div>
+          </div>
+
+          <div class="cell stat-cell pink col-4">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value">8/12</div>
+            <div class="stat-label">Tasks completed</div>
+          </div>
+
+          <div class="cell stat-cell teal col-3">
+            <div class="stat-icon">📝</div>
+            <div class="stat-value">24</div>
+            <div class="stat-label">Notes created</div>
+          </div>
+
+          <div class="cell stat-cell amber col-4">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value">14</div>
+            <div class="stat-label">Day streak</div>
+          </div>
+
+          <!-- Schedule -->
+          <div class="cell schedule-cell col-7 row-2">
+            <div class="cell-header">
+              <h3 class="cell-title">📅 Today's Schedule</h3>
+              <a href="#" class="cell-action">View All →</a>
+            </div>
+            <div class="schedule-list">
+              <div class="schedule-item">
+                <div class="schedule-time">08:00</div>
+                <div class="schedule-bar purple"></div>
+                <div class="schedule-info">
+                  <div class="schedule-title">Distributed Systems</div>
+                  <div class="schedule-meta">
+                    Lecture Hall A • Prof. Anderson
+                  </div>
+                </div>
+                <span class="schedule-badge">Now</span>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-time">11:00</div>
+                <div class="schedule-bar pink"></div>
+                <div class="schedule-info">
+                  <div class="schedule-title">Data Structures Lab</div>
+                  <div class="schedule-meta">Computer Lab 3 • Dr. Martinez</div>
+                </div>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-time">14:00</div>
+                <div class="schedule-bar teal"></div>
+                <div class="schedule-info">
+                  <div class="schedule-title">Software Engineering</div>
+                  <div class="schedule-meta">Room 204 • Prof. Williams</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="cell progress-cell col-5">
+            <div class="cell-header">
+              <h3 class="cell-title">Weekly Progress</h3>
+            </div>
+            <div class="progress-ring">
+              <svg width="100" height="100">
+                <circle class="progress-bg" cx="50" cy="50" r="40" />
+                <circle class="progress-fill" cx="50" cy="50" r="40" />
+              </svg>
+              <div class="progress-text">82%</div>
+            </div>
+            <div class="progress-label">Keep up the great work!</div>
+          </div>
+
+          <!-- Tasks -->
+          <div class="cell task-cell col-7">
+            <div class="cell-header">
+              <h3 class="cell-title">✓ Upcoming Tasks</h3>
+              <a href="#" class="cell-action">View All →</a>
+            </div>
+            <div class="task-list">
+              <div class="task-item">
+                <div class="task-check"></div>
+                <div class="task-content">
+                  <div class="task-title">CAT 1 Revision</div>
+                  <div class="task-due">Due tomorrow</div>
+                </div>
+                <span class="task-priority priority-high">High</span>
+              </div>
+              <div class="task-item">
+                <div class="task-check"></div>
+                <div class="task-content">
+                  <div class="task-title">Submit Lab Report</div>
+                  <div class="task-due">Due Friday</div>
+                </div>
+                <span class="task-priority priority-medium">Medium</span>
+              </div>
+              <div class="task-item">
+                <div class="task-check done">✓</div>
+                <div class="task-content">
+                  <div class="task-title completed">Review Lecture Notes</div>
+                  <div class="task-due">Completed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="cell actions-cell col-5 row-1">
+            <h3 class="actions-title">Quick Actions</h3>
+            <div class="action-grid">
+              <button class="action-btn">
+                <span>📝</span>
+                New Note
+              </button>
+              <button class="action-btn">
+                <span>➕</span>
+                Add Task
+              </button>
+              <button class="action-btn">
+                <span>👥</span>
+                Group Chat
+              </button>
+              <button class="action-btn">
+                <span>📁</span>
+                Resources
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Design Info -->
+    <div class="design-info">
+      <h4>Variation 11: Hybrid Bento (Light)</h4>
+      <ul>
+        <li>• Bento grid from Var 9</li>
+        <li>• Header tabs from Var 2</li>
+        <li>• Navigation from Var 7</li>
+        <li>• Theme toggle (light/dark)</li>
+        <li>• Outfit + Inter fonts</li>
+        <li>• Indigo/Purple gradient system</li>
+      </ul>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById("theme-icon");
+        const infoTitle = document.querySelector(".design-info h4");
+
+        if (html.getAttribute("data-theme") === "dark") {
+          html.setAttribute("data-theme", "light");
+          icon.textContent = "🌙";
+          infoTitle.textContent = "Variation 11: Hybrid Bento (Light)";
+        } else {
+          html.setAttribute("data-theme", "dark");
+          icon.textContent = "☀️";
+          infoTitle.textContent = "Variation 11: Hybrid Bento (Dark)";
+        }
+      }
+    </script>
+  </body>
+</html>
