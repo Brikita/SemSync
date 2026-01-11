@@ -9,6 +9,7 @@ import {
   LogOut,
   X,
   Search,
+  Settings,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useAuthStore } from "../../store/authStore";
@@ -32,6 +33,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const classNavigation = [
     { name: "My Classes", href: "/groups", icon: Users },
     { name: "Resources", href: "/groups", icon: FolderOpen },
+  ];
+
+  const settingsNavigation = [
+    { name: "Settings", href: "/profile", icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -147,6 +152,46 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           </div>
           <div className="space-y-1">
             {classNavigation.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 group",
+                    isActive
+                      ? "bg-gradient-to-r from-primary to-purple-500 text-white shadow-lg shadow-primary/25"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground hover:translate-x-1"
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span
+                      className={cn(
+                        "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
+                        isActive
+                          ? "bg-white/20"
+                          : "bg-primary/10 group-hover:bg-primary/20"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                    </span>
+                    {item.name}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Settings Section */}
+          <div className="px-3 py-2 mt-6">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              Account
+            </span>
+          </div>
+          <div className="space-y-1">
+            {settingsNavigation.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.href}

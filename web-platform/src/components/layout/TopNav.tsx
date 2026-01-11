@@ -1,7 +1,8 @@
-import { Menu, Bell, Sun, Moon } from "lucide-react";
+import { Menu, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import NotificationsDropdown from "../notifications/NotificationsDropdown";
 
 interface TopNavProps {
   onMenuClick: () => void;
@@ -13,6 +14,7 @@ const pageTitles: Record<string, string> = {
   "/tasks": "Tasks",
   "/notebook": "Notes",
   "/groups": "Classes",
+  "/profile": "Settings",
 };
 
 export default function TopNav({ onMenuClick }: TopNavProps) {
@@ -90,14 +92,8 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
             <span className="sr-only">Toggle theme</span>
           </button>
 
-          {/* Notifications */}
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground relative">
-            <Bell className="h-4 w-4" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-[10px] font-bold text-white flex items-center justify-center">
-              3
-            </span>
-            <span className="sr-only">Notifications</span>
-          </button>
+          {/* Notifications Dropdown */}
+          <NotificationsDropdown />
 
           {/* New Task Button (Desktop only) */}
           <button className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-purple-500 text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all">
