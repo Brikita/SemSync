@@ -35,7 +35,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || "");
-      // Load extended profile fields from Firestore if needed
+      setRegistrationNumber(user.registrationNumber || "");
     }
   }, [user]);
 
@@ -48,7 +48,7 @@ export default function ProfilePage() {
     try {
       await updateUserProfile(user.uid, {
         displayName: displayName.trim(),
-        // Add more fields here as needed
+        registrationNumber: registrationNumber.trim(),
       });
 
       // Refresh user in store
