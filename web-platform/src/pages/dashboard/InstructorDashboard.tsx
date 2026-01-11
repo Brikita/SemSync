@@ -15,6 +15,8 @@ import {
   BookOpen,
   AlertCircle,
   CheckCircle,
+  Clock,
+  ArrowRight,
 } from "lucide-react";
 
 export default function InstructorDashboard() {
@@ -27,8 +29,11 @@ export default function InstructorDashboard() {
   // Form state
   const [content, setContent] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
-  const [isAssessment, setIsAssessment] = useState(false);
+  const [postType, setPostType] = useState<
+    "announcement" | "assessment" | "postponement"
+  >("announcement");
   const [eventDate, setEventDate] = useState("");
+  const [newDate, setNewDate] = useState(""); // For postponement (new time)
   const [isPosting, setIsPosting] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
   const [postError, setPostError] = useState("");
@@ -76,12 +81,21 @@ export default function InstructorDashboard() {
 
       // Construct clean additional data object (remove undefined values)
       const additionalData: any = {
-        isAssessment,
+        isAssessment: postType === "assessment",
+        isPostponement: postType === "postponement",
+        postType,
       };
 
       if (selectedUnitId) additionalData.unitId = selectedUnitId;
       if (unit?.name) additionalData.unitName = unit.name;
-      if (eventDate) additionalData.eventDate = new Date(eventDate);
+
+      // Handle dates based on type
+      if (postType === "assessment" && eventDate) {
+        additionalData.eventDate = new Date(eventDate);
+      } else if (postType === "postponement") {
+        if (eventDate) additionalData.originalDate = new Date(eventDate);
+        if (newDate) additionalData.newDate = new Date(newDate);
+      }
 
       await createPost(
         selectedGroup,
@@ -95,8 +109,9 @@ export default function InstructorDashboard() {
       // Reset form
       setContent("");
       setSelectedUnitId("");
-      setIsAssessment(false);
+      setPostType("announcement");
       setEventDate("");
+      setNewDate("");
       setPostSuccess(true);
 
       // Clear success message after 3 seconds
@@ -206,75 +221,136 @@ export default function InstructorDashboard() {
                 </div>
               )}
 
+              <div className="flex gap-2 mb-6 p-1 bg-muted/30 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setPostType("announcement")}
+                  className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition-colors ${
+                    postType === "announcement"
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Announcement
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPostType("assessment")}
+                  className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition-colors ${
+                    postType === "assessment"
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Assessment
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPostType("postponement")}
+                  className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition-colors ${
+                    postType === "postponement"
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Postponement
+                </button>
+              </div>
+
               <form onSubmit={handlePost} className="space-y-4">
-                {/* Unit Selection */}
-                {units.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5">
-                      Related Unit (Optional)
-                    </label>
-                    <select
-                      value={selectedUnitId}
-                      onChange={(e) => setSelectedUnitId(e.target.value)}
-                      className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Unit Selection */}
+                  {units.length > 0 && (
+                    <div
+                      className={
+                        postType === "postponement" ? "md:col-span-2" : ""
+                      }
                     >
-                      <option value="">General Announcement</option>
-                      {units.map((unit) => (
-                        <option key={unit.id} value={unit.id}>
-                          {unit.code} - {unit.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+                      <label className="block text-sm font-medium text-foreground mb-1.5">
+                        Related Unit (Optional)
+                      </label>
+                      <select
+                        value={selectedUnitId}
+                        onChange={(e) => setSelectedUnitId(e.target.value)}
+                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="">General Announcement</option>
+                        {units.map((unit) => (
+                          <option key={unit.id} value={unit.id}>
+                            {unit.code} - {unit.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Dates for Assessment/Postponement */}
+                  {postType === "assessment" && (
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Assessment Date
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={eventDate}
+                        onChange={(e) => setEventDate(e.target.value)}
+                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                  )}
+
+                  {postType === "postponement" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-1 md:col-span-2">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Old Class Time (To Identify)
+                        </label>
+                        <input
+                          type="datetime-local"
+                          value={eventDate}
+                          onChange={(e) => setEventDate(e.target.value)}
+                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
+                          <ArrowRight className="h-4 w-4" />
+                          New Class Time (Optional)
+                        </label>
+                        <input
+                          type="datetime-local"
+                          value={newDate}
+                          onChange={(e) => setNewDate(e.target.value)}
+                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Content */}
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1.5">
-                    Announcement Content *
+                    {postType === "postponement"
+                      ? "Reason / Details"
+                      : "Announcement Content"}{" "}
+                    *
                   </label>
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="Write your announcement here..."
+                    placeholder={
+                      postType === "postponement"
+                        ? "e.g. Instructor unavailable, class moved to..."
+                        : "Write your announcement here..."
+                    }
                     rows={5}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                     required
                   />
                 </div>
-
-                {/* Assessment Toggle */}
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="isAssessment"
-                    checked={isAssessment}
-                    onChange={(e) => setIsAssessment(e.target.checked)}
-                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                  />
-                  <label
-                    htmlFor="isAssessment"
-                    className="text-sm font-medium text-foreground"
-                  >
-                    This is an assessment/exam announcement
-                  </label>
-                </div>
-
-                {/* Event Date (if assessment) */}
-                {isAssessment && (
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      Assessment Date
-                    </label>
-                    <input
-                      type="datetime-local"
-                      value={eventDate}
-                      onChange={(e) => setEventDate(e.target.value)}
-                      className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                  </div>
-                )}
 
                 {/* Submit Button */}
                 <button
